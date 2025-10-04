@@ -1,17 +1,17 @@
 # 🏭 Grupo Alimenticio Alba del Fonce (GAAF)
-# 🧾 Sistema de Gestión de Inventarios y Procesos Productivos
-📖 Descripción del Proyecto
+## 🧾 Sistema de Gestión de Inventarios y Procesos Productivos
+###📖 Descripción del Proyecto
 
 Este proyecto corresponde al desarrollo de una aplicación de escritorio que forma parte del sistema ERP del Grupo Alimenticio Alba del Fonce (GAAF).
 Su objetivo es gestionar de forma integral los inventarios y procesos productivos, optimizando el control de entradas, salidas y solicitudes de materiales, mediante una interfaz amigable, lógica de negocio sólida y conexión a base de datos MySQL.
 
 
-🎯 Objetivo General
+###🎯 Objetivo General
 
 Desarrollar un aplicativo de escritorio que integre base de datos, interfaz gráfica y lógica de negocio, garantizando el cumplimiento de los requisitos funcionales y no funcionales establecidos en la propuesta ERP.
 
 
-🎯 Objetivos Específicos
+###🎯 Objetivos Específicos
 
 Analizar los requerimientos de la propuesta ERP y definir actores y funcionalidades.
 
@@ -25,7 +25,7 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 
 
-👥 Equipo de Desarrollo
+###👥 Equipo de Desarrollo
 
 Rol	Nombre
 
@@ -40,7 +40,7 @@ Rol	Nombre
 💻 Desarrolladores	Miguel José Báez García, Alan David Gutiérrez Jiménez
 
 
-🧪 Cronograma de Entregas
+###🧪 Cronograma de Entregas
 
 Fecha	Entregable
 
