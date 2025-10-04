@@ -27,7 +27,7 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 ### 👥 Equipo de Desarrollo
 
-Rol	Nombre
+#### Rol	Nombre
 
 🧠 Jefe de Proyecto	Deison Leonardo Patiño Mejía
 
@@ -42,7 +42,7 @@ Rol	Nombre
 
 ### 🧪 Cronograma de Entregas
 
-Fecha	Entregable
+#### Fecha	Entregable
 
 🗓️ 4 de octubre	Diseño y base de datos
 
