@@ -27,25 +27,25 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 ### 👥 Equipo de Desarrollo
 
-#### Rol	Nombre
+#### Rol / Nombre
 
-🧠 Jefe de Proyecto	Deison Leonardo Patiño Mejía
+🧠 Jefe de Proyecto:	Deison Leonardo Patiño Mejía
 
-🗄️ Administrador de Base de Datos (DBA)	Nicolás Sarmiento Gómez
+🗄️ Administrador de Base de Datos (DBA):	Nicolás Sarmiento Gómez
 
-🧩 Diseñadores UML	Luis Alberto Becerra Rojas, Eduar Andrés Suárez Contreras
+🧩 Diseñadores UML:	Luis Alberto Becerra Rojas, Eduar Andrés Suárez Contreras
 
-🧪 QA / Pruebas	Sofía Deantonio Luna
+🧪 QA / Pruebas:	Sofía Deantonio Luna
 
-💻 Desarrolladores	Miguel José Báez García, Alan David Gutiérrez Jiménez
+💻 Desarrolladores:	Miguel José Báez García, Alan David Gutiérrez Jiménez
 
 
 ### 🧪 Cronograma de Entregas
 
-#### Fecha	Entregable
+#### Fecha / Entregable
 
-🗓️ 4 de octubre	Diseño y base de datos
+🗓️ 4 de Octubre:	Diseño y base de datos
 
-🗓️ 11 de octubre	Código y diseño finalizados
+🗓️ 11 de Octubre:	Código y diseño finalizados
 
-🗓️ 18 de octubre	Entrega funcional y manuales
+🗓️ 18 de Octubre:	Entrega funcional y manuales
