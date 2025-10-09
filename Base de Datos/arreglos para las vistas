@@ -1,0 +1,16 @@
+coloqué esos comandos para poder quitar los comandos de SQL de el codigo y que haga las funciones
+
+-- vista con las columnas que muestras en la tabla
+CREATE OR REPLACE VIEW v_inventario AS
+SELECT idInventario, idPedido, idBodega, cantidadTotal, cantidadPorBodega
+FROM inventario;
+
+-- vista que suma pedido_producto.cantidad
+CREATE OR REPLACE VIEW v_total_pedido_producto AS
+SELECT COALESCE(SUM(cantidad),0) AS total
+FROM pedido_producto;
+
+
+--con este comando se verifica que ya quedó funcionando
+SELECT * FROM v_inventario;
+SELECT total FROM v_total_pedido_producto;
