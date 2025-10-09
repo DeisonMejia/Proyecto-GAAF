@@ -1,0 +1,8 @@
+com\gaaf\InventarioDAO.class
+com\gaaf\InventarioRow.class
+com\gaaf\SqlLoader.class
+com\gaaf\InventarioView.class
+module-info.class
+com\gaaf\App.class
+com\gaaf\HomeView.class
+com\gaaf\Db.class
