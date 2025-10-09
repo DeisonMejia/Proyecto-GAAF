@@ -1,0 +1,121 @@
+package com.gaaf;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+
+import java.math.BigDecimal;
+
+/**
+ * Vista de inventario.
+ * Arma la tabla, carga datos desde el DAO y muestra acciones.
+ */
+public class InventarioView {
+    private final BorderPane root;                     // contenedor raiz
+    private final TableView<InventarioRow> tabla = new TableView<>();
+    private final Label pie = new Label("Listo.");
+    private final InventarioDAO dao = new InventarioDAO();
+
+    public InventarioView(App app) {
+        root = new BorderPane();
+        root.setPadding(new Insets(6));
+
+        // encabezado con boton regresar, logo y titulo
+        Button btnBack = new Button("← Regresar");
+        btnBack.setOnAction(e -> app.mostrarHome());
+
+        ImageView logo = new ImageView(new Image(getClass().getResource("/img/logo.png").toExternalForm()));
+        logo.setFitHeight(24); logo.setPreserveRatio(true);
+
+        Label titulo = new Label("Inventario");
+        titulo.getStyleClass().add("titulo");
+
+        HBox header = new HBox(8, btnBack, logo, titulo);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(6));
+
+        // boton de accion centrado en el panel derecho
+        Button btnTotal = new Button("Ver cantidad total en bodega");
+        btnTotal.setPrefWidth(220);
+
+        BorderPane acciones = new BorderPane();
+        acciones.setCenter(btnTotal);                // centrado vertical y horizontal
+        acciones.setPadding(new Insets(6));
+        acciones.setPrefWidth(240);
+
+        // tabla y datos
+        configurarTabla();
+        cargarInventarioDB();
+
+        BorderPane panelTabla = new BorderPane(tabla);
+        panelTabla.setPadding(new Insets(8));
+        panelTabla.setStyle("-fx-background-color:#ffffff; -fx-border-color:#d0d3d9; -fx-border-radius:10; -fx-background-radius:10;");
+
+        VBox cuerpo = new VBox(6, header, panelTabla);
+        HBox contenido = new HBox(10, cuerpo, acciones);
+        contenido.setPadding(new Insets(10));
+
+        root.setCenter(contenido);
+        root.setBottom(pie);
+        BorderPane.setMargin(pie, new Insets(6,10,10,10));
+        root.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // acciones
+        btnTotal.setOnAction(e -> mostrarTotalPedidoProducto());
+    }
+
+    /** define columnas y mapeos a propiedades del DTO */
+    private void configurarTabla() {
+        TableColumn<InventarioRow, Integer> cIdInv = new TableColumn<>("ID_inventario");
+        cIdInv.setCellValueFactory(new PropertyValueFactory<>("idInventario"));
+
+        TableColumn<InventarioRow, Integer> cIdPed = new TableColumn<>("ID_pedido");
+        cIdPed.setCellValueFactory(new PropertyValueFactory<>("idPedido"));
+
+        TableColumn<InventarioRow, Integer> cIdBod = new TableColumn<>("ID_bodega");
+        cIdBod.setCellValueFactory(new PropertyValueFactory<>("idBodega"));
+
+        TableColumn<InventarioRow, BigDecimal> cTotal = new TableColumn<>("Cantidad total");
+        cTotal.setCellValueFactory(new PropertyValueFactory<>("cantidadTotal"));
+
+        TableColumn<InventarioRow, BigDecimal> cPorBod = new TableColumn<>("Cantidad por bodega");
+        cPorBod.setCellValueFactory(new PropertyValueFactory<>("cantidadPorBodega"));
+
+        tabla.getColumns().setAll(cIdInv, cIdPed, cIdBod, cTotal, cPorBod);
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+    }
+
+    /** consulta la BD mediante el DAO y carga las filas en la tabla */
+    private void cargarInventarioDB() {
+        try {
+            tabla.getItems().setAll(dao.listar());
+            pie.setText("Inventario cargado desde base de datos.");
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Error cargando inventario: " + ex.getMessage()).showAndWait();
+            pie.setText("Error al cargar inventario.");
+        }
+    }
+
+    /** muestra un alert con la suma de pedido_producto.cantidad */
+    private void mostrarTotalPedidoProducto() {
+        try {
+            BigDecimal total = dao.totalDesdePedidoProducto();
+            new Alert(Alert.AlertType.INFORMATION, "La cantidad total es de " + total).showAndWait();
+            pie.setText("Total: " + total);
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Error consultando total: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    /** helper para pantallas no implementadas */
+    public static void notImplemented(String modulo){
+        new Alert(Alert.AlertType.INFORMATION, modulo + " (pantalla en construccion)").showAndWait();
+    }
+
+    /** expone el nodo raiz para construir la Scene */
+    public BorderPane getRoot() { return root; }
+}
