@@ -49,3 +49,9 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 🗓️ 11 de Octubre:	Código y diseño finalizados
 
 🗓️ 18 de Octubre:	Entrega funcional y manuales
+
+
+### 📄 Documento Plan de accion del proyecto
+
+> Accedemos con el siguiente link
+https://docs.google.com/document/d/1B_rr9QrhllXNR1gwuG-JbrsGdP-mkZKVjIBNS_Nujyk/edit?usp=sharing
