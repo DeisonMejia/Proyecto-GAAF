@@ -99,8 +99,13 @@ SELECT p.idPedido, pr.nombre AS proveedor, p.fechaEntrega, p.recibido
 FROM pedido p
 JOIN proveedor pr ON p.idProveedor = pr.idProveedor;
 
--- 3. Listar productos con su estado y humedad
-
+-- 3- Listar productos con su estado y humedad
+SELECT 
+    idCodigo AS codigo,
+    descripcion,
+    estado,
+    humedad
+FROM producto;
 
 -- Consultas intermedias 
 
