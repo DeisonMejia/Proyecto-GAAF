@@ -257,3 +257,39 @@ INSERT INTO inventario (idPedido, idBodega, cantidadTotal, cantidadPorBodega) VA
 (3, 3, 75, 40),
 (4, 4, 60, 30),
 (5, 5, 200, 100);
+
+
+
+-- Vistas
+
+-- Pedidos pendientes (base)
+CREATE OR REPLACE VIEW v_pedidos_pendientes AS
+SELECT idPedido, idProveedor, fechaEntrega, cantidadTotal, fechaCreacion, pesoTotal, recibido
+FROM pedido
+WHERE recibido = 0;
+
+-- Resumen de pendientes
+CREATE OR REPLACE VIEW v_resumen_pedidos_pendientes AS
+SELECT COUNT(*) AS pendientes, COALESCE(SUM(pesoTotal),0) AS total_kg
+FROM v_pedidos_pendientes;
+
+-- Proveedores con entregas incompletas (por texto en observaciones)
+CREATE OR REPLACE VIEW v_proveedores_incompletos AS
+SELECT idProveedor, nombre, observaciones
+FROM proveedor
+WHERE LOWER(observaciones) LIKE '%incomplet%';
+
+-- vista con las columnas que muestras en la tabla
+CREATE OR REPLACE VIEW v_inventario AS
+SELECT idInventario, idPedido, idBodega, cantidadTotal, cantidadPorBodega
+FROM inventario;
+
+-- vista que suma pedido_producto.cantidad
+CREATE OR REPLACE VIEW v_total_pedido_producto AS
+SELECT COALESCE(SUM(cantidad),0) AS total
+FROM pedido_producto;
+
+
+--con este comando se verifica que ya quedó funcionando
+SELECT * FROM v_inventario;
+SELECT total FROM v_total_pedido_producto;
