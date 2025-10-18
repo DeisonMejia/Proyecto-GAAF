@@ -1,0 +1,1 @@
+SELECT total FROM v_total_pedido_producto;

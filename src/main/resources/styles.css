@@ -1,0 +1,11 @@
+﻿/* base */
+.root {
+  -fx-font-family: "Segoe UI", Arial, sans-serif;
+  -fx-background-color: #e0e2e7; /* gris mas oscuro y visible */
+}
+.button { -fx-padding: 8 12; -fx-background-radius: 10; }
+.titulo { -fx-font-size: 16px; -fx-font-weight: bold; }
+.table-view { -fx-background-radius: 10; -fx-border-radius: 10; }
+
+/* home */
+.home-subtitle { -fx-font-size: 13px; -fx-text-fill: #555; }
