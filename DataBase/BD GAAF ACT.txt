@@ -335,3 +335,103 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+--Procedimientos almacenados
+
+DELIMITER $$
+
+-- Insertar un usuario nuevo
+CREATE PROCEDURE sp_insertar_usuario (
+    IN p_nombre VARCHAR(100),
+    IN p_contrasena VARCHAR(255),
+    IN p_rol ENUM('Admin', 'Operario', 'Coordinador', 'JefeBodega'),
+    IN p_activo BOOLEAN
+)
+BEGIN
+    INSERT INTO usuario (nombre, contrasena, rol, activo)
+    VALUES (p_nombre, p_contrasena, p_rol, p_activo);
+END$$
+
+
+-- Insertar proveedor
+CREATE PROCEDURE sp_insertar_proveedor (
+    IN p_nombre VARCHAR(100),
+    IN p_direccion VARCHAR(150),
+    IN p_telefono VARCHAR(20),
+    IN p_correo VARCHAR(100),
+    IN p_ciudad VARCHAR(100),
+    IN p_vereda VARCHAR(100),
+    IN p_observaciones TEXT,
+    IN p_activo BOOLEAN
+)
+BEGIN
+    INSERT INTO proveedor (nombre, direccion, telefono, correo, ciudad, vereda, observaciones, activo)
+    VALUES (p_nombre, p_direccion, p_telefono, p_correo, p_ciudad, p_vereda, p_observaciones, p_activo);
+END$$
+
+
+-- Insertar producto
+CREATE PROCEDURE sp_insertar_producto (
+    IN p_descripcion VARCHAR(150),
+    IN p_peso FLOAT,
+    IN p_estado VARCHAR(50),
+    IN p_humedad FLOAT,
+    IN p_fermentacion FLOAT
+)
+BEGIN
+    INSERT INTO producto (descripcion, peso, estado, humedad, fermentacion)
+    VALUES (p_descripcion, p_peso, p_estado, p_humedad, p_fermentacion);
+END$$
+
+
+-- Insertar pedido
+CREATE PROCEDURE sp_insertar_pedido (
+    IN p_idProveedor INT,
+    IN p_idUsuario INT,
+    IN p_fechaEntrega DATE,
+    IN p_fechaCreacion DATE,
+    IN p_observaciones TEXT
+)
+BEGIN
+    INSERT INTO pedido (idProveedor, idUsuario, fechaEntrega, fechaCreacion, observaciones)
+    VALUES (p_idProveedor, p_idUsuario, p_fechaEntrega, p_fechaCreacion, p_observaciones);
+END$$
+
+
+-- Insertar pedido_producto (relación N:M)
+CREATE PROCEDURE sp_insertar_pedido_producto (
+    IN p_idPedido INT,
+    IN p_idProducto INT,
+    IN p_cantidad INT
+)
+BEGIN
+    INSERT INTO pedido_producto (idPedido, idProducto, cantidad)
+    VALUES (p_idPedido, p_idProducto, p_cantidad);
+END$$
+
+
+-- Insertar bodega
+CREATE PROCEDURE sp_insertar_bodega (
+    IN p_lugar VARCHAR(100),
+    IN p_movimiento BOOLEAN
+)
+BEGIN
+    INSERT INTO bodega (lugar, movimiento)
+    VALUES (p_lugar, p_movimiento);
+END$$
+
+
+-- Insertar inventario
+CREATE PROCEDURE sp_insertar_inventario (
+    IN p_idPedido INT,
+    IN p_idBodega INT,
+    IN p_cantidadTotal FLOAT,
+    IN p_cantidadPorBodega FLOAT
+)
+BEGIN
+    INSERT INTO inventario (idPedido, idBodega, cantidadTotal, cantidadPorBodega)
+    VALUES (p_idPedido, p_idBodega, p_cantidadTotal, p_cantidadPorBodega);
+END$$
+
+DELIMITER ;
