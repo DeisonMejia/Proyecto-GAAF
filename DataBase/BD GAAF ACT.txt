@@ -1,0 +1,337 @@
+--Crear base de datos y usuario
+CREATE DATABASE IF NOT EXISTS gaaf;
+USE gaaf;
+
+CREATE USER IF NOT EXISTS 'gaaf'@'localhost' IDENTIFIED BY 'gaaf';
+GRANT ALL PRIVILEGES ON gaaf.* TO 'gaaf'@'localhost';
+FLUSH PRIVILEGES;
+
+
+--Tabla de Usuarios
+CREATE TABLE usuario (
+    idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
+    rol ENUM('Admin', 'Operario', 'Coordinador', 'JefeBodega') NOT NULL,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+
+--Proveedores
+CREATE TABLE proveedor (
+    idProveedor INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(150),
+    telefono VARCHAR(20),
+    correo VARCHAR(100),
+    ciudad VARCHAR(100),
+    vereda VARCHAR(100),
+    observaciones TEXT,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+
+--Pedidos (relaciona proveedor y usuario)
+CREATE TABLE pedido (
+    idPedido INT AUTO_INCREMENT PRIMARY KEY,
+    idProveedor INT NOT NULL,
+    idUsuario INT NOT NULL,
+    fechaEntrega DATE,
+    cantidadTotal INT DEFAULT 0,
+    fechaCreacion DATE NOT NULL,
+    pesoTotal FLOAT DEFAULT 0,
+    recibido BOOLEAN DEFAULT FALSE,
+    observaciones TEXT,
+    FOREIGN KEY (idProveedor) REFERENCES proveedor(idProveedor)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+
+--Productos
+CREATE TABLE producto (
+    idCodigo INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(150) NOT NULL,
+    peso FLOAT,
+    estado VARCHAR(50),
+    humedad FLOAT,
+    fermentacion FLOAT
+);
+
+
+--Relación Pedido - Producto (N:M)
+CREATE TABLE pedido_producto (
+    idPedido INT NOT NULL,
+    idProducto INT NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    PRIMARY KEY (idPedido, idProducto),
+    FOREIGN KEY (idPedido) REFERENCES pedido(idPedido)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (idProducto) REFERENCES producto(idCodigo)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+
+--Bodegas
+CREATE TABLE bodega (
+    idBodega INT AUTO_INCREMENT PRIMARY KEY,
+    lugar VARCHAR(100) NOT NULL,
+    movimiento BOOLEAN DEFAULT FALSE
+);
+
+
+--Inventario
+CREATE TABLE inventario (
+    idInventario INT AUTO_INCREMENT PRIMARY KEY,
+    idPedido INT NOT NULL,
+    idBodega INT NOT NULL,
+    cantidadTotal FLOAT DEFAULT 0,
+    cantidadPorBodega FLOAT DEFAULT 0,
+    FOREIGN KEY (idPedido) REFERENCES pedido(idPedido)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (idBodega) REFERENCES bodega(idBodega)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+-- Consultas básicas
+
+-- 1- Ver todos los proveedores activos
+SELECT idProveedor, nombre, ciudad, correo
+FROM proveedor
+WHERE activo = TRUE;
+
+-- 2- Listar todos los pedidos con su proveedor
+SELECT p.idPedido, pr.nombre AS proveedor, p.fechaEntrega, p.recibido
+FROM pedido p
+JOIN proveedor pr ON p.idProveedor = pr.idProveedor;
+
+-- 3- Listar productos con su estado y humedad
+SELECT 
+    idCodigo AS codigo,
+    descripcion,
+    estado,
+    humedad
+FROM producto;
+
+-- Consultas intermedias 
+
+-- 4- Ver todos los productos de un pedido específico
+SELECT pp.idPedido, pr.descripcion, pp.cantidad
+FROM pedido_producto pp
+JOIN producto pr ON pp.idProducto = pr.idCodigo
+WHERE pp.idPedido = 1; -- Cambiar por el ID del pedido
+
+-- 5- Mostrar inventario en cada bodega
+SELECT i.idInventario, b.lugar, i.cantidadPorBodega, i.cantidadTotal
+FROM inventario i
+JOIN bodega b ON i.idBodega = b.idBodega;
+
+-- 6- Pedidos pendientes de recibir
+SELECT idPedido, fechaEntrega, cantidadTotal, pesoTotal
+FROM pedido
+WHERE recibido = FALSE;
+
+
+-- Consultas avanzadas 
+
+-- 7- Total de productos por pedido
+SELECT pp.idPedido, SUM(pp.cantidad) AS total_productos
+FROM pedido_producto pp
+GROUP BY pp.idPedido;
+
+-- 8- Peso total por proveedor en pedidos
+SELECT pr.nombre, SUM(p.pesoTotal) AS peso_acumulado
+FROM pedido p
+JOIN proveedor pr ON p.idProveedor = pr.idProveedor
+GROUP BY pr.nombre;
+
+-- 9- Inventario total por bodega
+SELECT b.lugar, SUM(i.cantidadPorBodega) AS total_en_bodega
+FROM inventario i
+JOIN bodega b ON i.idBodega = b.idBodega
+GROUP BY b.lugar;
+
+-- 10- Detalle de un pedido con proveedor, productos y bodega
+SELECT p.idPedido, pr.nombre AS proveedor, prod.descripcion AS producto, 
+       pp.cantidad, b.lugar AS bodega
+FROM pedido p
+JOIN proveedor pr ON p.idProveedor = pr.idProveedor
+JOIN pedido_producto pp ON p.idPedido = pp.idPedido
+JOIN producto prod ON pp.idProducto = prod.idCodigo
+JOIN inventario i ON p.idPedido = i.idPedido
+JOIN bodega b ON i.idBodega = b.idBodega
+WHERE p.idPedido = 1;
+
+-- INCLUSION DE DATOS :
+
+--Tabla usuario
+INSERT INTO usuario (nombre, contrasena, rol, activo) VALUES
+('Administrador General', 'admin123', 'Admin', TRUE),
+('Carlos Rojas', 'operario2025', 'Operario', TRUE),
+('Laura Gómez', 'coord2025', 'Coordinador', TRUE),
+('Javier Martínez', 'bodega2025', 'JefeBodega', TRUE);
+
+--Tabla proveedores
+
+INSERT INTO proveedor (nombre, direccion, telefono, correo, ciudad, vereda, observaciones, activo) VALUES
+('Proveedor A', 'Calle 10 #12-34', '3001112233', 'provA@email.com', 'Bogotá', 'Vereda Norte', 'Entrega puntual', TRUE),
+('Proveedor B', 'Carrera 15 #22-45', '3102223344', 'provB@email.com', 'Medellín', 'Vereda Sur', 'Especialista en cacao fino', TRUE),
+('Proveedor C', 'Av 30 #45-67', '3203334455', 'provC@email.com', 'Cali', 'Vereda Centro', 'Provee en grandes cantidades', TRUE),
+('Proveedor D', 'Cl 50 #10-12', '3114445566', 'provD@email.com', 'Bucaramanga', 'Vereda Alta', 'Requiere confirmación de pago', TRUE),
+('Proveedor E', 'Cra 7 #77-20', '3125556677', 'provE@email.com', 'Barranquilla', 'Vereda Oriental', 'Buen historial de entregas', TRUE),
+('Proveedor F', 'Cl 12 #33-12', '3136667788', 'provF@email.com', 'Cartagena', 'Vereda Occidental', 'Calidad variable', TRUE),
+('Proveedor G', 'Cl 100 #20-90', '3147778899', 'provG@email.com', 'Santa Marta', 'Vereda Norte', 'Siempre entrega antes de tiempo', TRUE),
+('Proveedor H', 'Cra 30 #40-55', '3158889900', 'provH@email.com', 'Pereira', 'Vereda Sur', 'Entrega incompleta en ocasiones', TRUE),
+('Proveedor I', 'Cl 23 #18-60', '3169990011', 'provI@email.com', 'Cúcuta', 'Vereda Centro', 'Nuevo proveedor', TRUE),
+('Proveedor J', 'Cra 50 #60-70', '3170001122', 'provJ@email.com', 'Manizales', 'Vereda Oriental', 'Muy buena calidad', TRUE);
+
+--Tabla pedidos
+
+INSERT INTO pedido (idProveedor, idUsuario, fechaEntrega, cantidadTotal, fechaCreacion, pesoTotal, recibido, observaciones) VALUES
+(1, 3, '2025-10-01', 100, '2025-09-25', 250.5, TRUE, 'Pedido recibido completo'),
+(2, 3, '2025-10-02', 50, '2025-09-26', 120.0, FALSE, 'Pendiente entrega parcial'),
+(3, 3, '2025-10-03', 75, '2025-09-27', 180.0, TRUE, 'Recibido sin novedades'),
+(4, 3, '2025-10-04', 60, '2025-09-28', 150.2, FALSE, 'Pendiente revisión'),
+(5, 3, '2025-10-05', 200, '2025-09-29', 500.0, TRUE, 'Entrega rápida'),
+(6, 3, '2025-10-06', 90, '2025-09-30', 210.0, TRUE, 'Recibido a tiempo'),
+(7, 3, '2025-10-07', 120, '2025-09-30', 300.0, FALSE, 'Pendiente recepción'),
+(8, 3, '2025-10-08', 40, '2025-09-30', 100.5, TRUE, 'Recibido incompleto'),
+(9, 3, '2025-10-09', 55, '2025-09-30', 130.3, FALSE, 'Pendiente confirmar calidad'),
+(10, 3, '2025-10-10', 150, '2025-09-30', 400.0, TRUE, 'Entrega en óptimas condiciones');
+
+--Tabla Producto
+
+INSERT INTO producto (descripcion, peso, estado, humedad, fermentacion) VALUES
+('Cacao tipo A', 25.0, 'Bueno', 7.5, 65.0),
+('Cacao tipo B', 30.0, 'Excelente', 6.0, 70.0),
+('Cacao tipo C', 28.0, 'Regular', 8.0, 55.0),
+('Cacao tipo D', 40.0, 'Bueno', 7.2, 68.0),
+('Cacao tipo E', 35.0, 'Excelente', 5.5, 72.0),
+('Cacao tipo F', 32.0, 'Malo', 9.0, 50.0),
+('Cacao tipo G', 29.0, 'Bueno', 6.8, 66.0),
+('Cacao tipo H', 31.0, 'Excelente', 5.0, 75.0),
+('Cacao tipo I', 33.0, 'Bueno', 7.0, 67.0),
+('Cacao tipo J', 27.0, 'Regular', 8.5, 60.0);
+
+
+--Tabla pedido_producto
+
+INSERT INTO pedido_producto (idPedido, idProducto, cantidad) VALUES
+(1, 1, 20),
+(2, 2, 15),
+(3, 3, 10),
+(4, 4, 25),
+(5, 5, 30),
+(6, 6, 12),
+(7, 7, 18),
+(8, 8, 22),
+(9, 9, 16),
+(10, 10, 20);
+
+
+--Tabla bodega
+
+INSERT INTO bodega (lugar, movimiento) VALUES
+('Bodega Norte', TRUE),
+('Bodega Sur', FALSE),
+('Bodega Centro', TRUE),
+('Bodega Oriental', FALSE),
+('Bodega Occidental', TRUE);
+
+
+--Tabla inventario
+
+INSERT INTO inventario (idPedido, idBodega, cantidadTotal, cantidadPorBodega) VALUES
+(1, 1, 100, 50),
+(2, 2, 50, 25),
+(3, 3, 75, 40),
+(4, 4, 60, 30),
+(5, 5, 200, 100);
+
+
+
+-- Vistas
+
+-- Pedidos pendientes (base)
+CREATE OR REPLACE VIEW v_pedidos_pendientes AS
+SELECT idPedido, idProveedor, fechaEntrega, cantidadTotal, fechaCreacion, pesoTotal, recibido
+FROM pedido
+WHERE recibido = 0;
+
+-- Resumen de pendientes
+CREATE OR REPLACE VIEW v_resumen_pedidos_pendientes AS
+SELECT COUNT(*) AS pendientes, COALESCE(SUM(pesoTotal),0) AS total_kg
+FROM v_pedidos_pendientes;
+
+-- Proveedores con entregas incompletas (por texto en observaciones)
+CREATE OR REPLACE VIEW v_proveedores_incompletos AS
+SELECT idProveedor, nombre, observaciones
+FROM proveedor
+WHERE LOWER(observaciones) LIKE '%incomplet%';
+
+-- vista con las columnas que muestras en la tabla
+CREATE OR REPLACE VIEW v_inventario AS
+SELECT idInventario, idPedido, idBodega, cantidadTotal, cantidadPorBodega
+FROM inventario;
+
+-- vista que suma pedido_producto.cantidad
+CREATE OR REPLACE VIEW v_total_pedido_producto AS
+SELECT COALESCE(SUM(cantidad),0) AS total
+FROM pedido_producto;
+
+
+--con este comando se verifica que ya quedó funcionando
+SELECT * FROM v_inventario;
+SELECT total FROM v_total_pedido_producto;
+
+
+--Triggers
+
+
+--Disparador para actualizar pedido
+
+DELIMITER $$
+
+CREATE TRIGGER trg_actualizar_pedido
+AFTER INSERT ON pedido_producto
+FOR EACH ROW
+BEGIN
+    UPDATE pedido
+    SET 
+        cantidadTotal = (
+            SELECT SUM(pp.cantidad)
+            FROM pedido_producto pp
+            WHERE pp.idPedido = NEW.idPedido
+        ),
+        pesoTotal = (
+            SELECT SUM(pp.cantidad * pr.peso)
+            FROM pedido_producto pp
+            JOIN producto pr ON pr.idProducto = pp.idProducto
+            WHERE pp.idPedido = NEW.idPedido
+        )
+    WHERE idPedido = NEW.idPedido;
+END$$
+
+DELIMITER ;
+
+--Disparador para actualizar_inventario
+
+DELIMITER $$
+
+CREATE TRIGGER trg_actualizar_inventario
+AFTER INSERT ON inventario
+FOR EACH ROW
+BEGIN
+    UPDATE bodega
+    SET movimiento = TRUE
+    WHERE idBodega = NEW.idBodega;
+END$$
+
+DELIMITER ;
