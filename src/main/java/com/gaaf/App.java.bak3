@@ -1,0 +1,57 @@
+package com.gaaf;
+
+
+import javafx.scene.layout.BorderPane;
+import com.gaaf.Usuario;
+import com.gaaf.LoginView;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+/**
+ * App: punto de entrada de la aplicaciÃƒÂ³n.
+ * Mantiene la ventana (Stage) y cambia entre pantallas.
+ */
+public class App extends Application {
+    private Usuario usuarioActual;
+
+    public void setUsuarioActual(Usuario u){ this.usuarioActual = u; }
+    public Usuario getUsuarioActual(){ return this.usuarioActual; }
+
+
+    /** ventana principal */
+    private Stage stage;
+
+    @Override
+    public void start(Stage stage) {
+        this.stage = stage;
+        stage.setTitle("GAAF - Login");
+        mostrarLogin();
+        stage.show();
+    }
+
+    /** muestra la pantalla de login */
+    public void mostrarLogin() {
+        Login login = new Login(this);
+        Scene scene = new Scene(login.getRoot(), 400, 250);
+        stage.setScene(scene);
+    }
+
+    /** muestra la pantalla principal (home) */
+    public void mostrarHome() {
+        BorderPane home = new LoginView(this).getRoot();
+        Scene scene = new Scene(home.getRoot(), 900, 520);
+        stage.setScene(scene);
+    }
+
+    /** muestra el inventario */
+    public void mostrarInventario() {
+        InventarioView inventario = new InventarioView(this);
+        Scene scene = new Scene(inventario.getRoot(), 900, 520);
+        stage.setScene(scene);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

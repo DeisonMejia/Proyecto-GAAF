@@ -1,47 +1,58 @@
 package com.gaaf;
 
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-/**
- * Acceso a datos de inventario.
- * Toda la logica SQL esta en vistas y archivos .sql.
- */
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class InventarioDAO {
 
-  /** lista filas de inventario desde la vista v_inventario */
-  public List<InventarioRow> listar() {
-    String sql = SqlLoader.load("sql/inventario_listar.sql");
-    List<InventarioRow> out = new ArrayList<>();
-    try (Connection c = Db.get();
-         PreparedStatement ps = c.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-      while (rs.next()) {
-        out.add(new InventarioRow(
-            rs.getInt("idInventario"),
-            rs.getInt("idPedido"),
-            rs.getInt("idBodega"),
-            rs.getBigDecimal("cantidadTotal"),
-            rs.getBigDecimal("cantidadPorBodega")
-        ));
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException("error listando inventario: " + e.getMessage(), e);
-    }
-    return out;
-  }
+    public ObservableList<InventarioRow> listar() {
+        String sql =
+                "SELECT idInventario, idPedido, idBodega, cantidadTotal, cantidadPorBodega " +
+                "FROM v_inventario";
 
-  /** devuelve la suma de pedido_producto.cantidad usando la vista v_total_pedido_producto */
-  public BigDecimal totalDesdePedidoProducto() {
-    String sql = SqlLoader.load("sql/pedido_producto_total.sql");
-    try (Connection c = Db.get();
-         PreparedStatement ps = c.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-      return rs.next() ? rs.getBigDecimal(1) : BigDecimal.ZERO;
-    } catch (SQLException e) {
-      throw new RuntimeException("error sumando cantidad: " + e.getMessage(), e);
+        ObservableList<InventarioRow> data = FXCollections.observableArrayList();
+
+        try (Connection con = Db.get();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Integer idInventario = rs.getInt("idInventario");
+                Integer idPedido     = rs.getInt("idPedido");
+                Integer idBodega     = rs.getInt("idBodega");
+                BigDecimal cantTot   = rs.getBigDecimal("cantidadTotal");
+                BigDecimal cantBod   = rs.getBigDecimal("cantidadPorBodega");
+
+                InventarioRow r = new InventarioRow(
+                        idInventario, idPedido, idBodega, cantTot, cantBod
+                );
+                data.add(r);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Error consultando v_inventario", ex);
+        }
+        return data;
     }
-  }
+
+    // Usada por InventarioView; toma el total desde la vista existente
+    public BigDecimal totalDesdePedidoProducto() {
+        String sql = "SELECT total FROM v_total_pedido_producto";
+        try (Connection con = Db.get();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            if (rs.next()) {
+                BigDecimal t = rs.getBigDecimal(1);
+                return (t != null) ? t : BigDecimal.ZERO;
+            }
+            return BigDecimal.ZERO;
+        } catch (Exception ex) {
+            throw new RuntimeException("Error consultando v_total_pedido_producto", ex);
+        }
+    }
 }

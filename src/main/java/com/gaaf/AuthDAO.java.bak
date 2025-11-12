@@ -1,0 +1,29 @@
+package com.gaaf;
+
+import java.sql.*;
+
+public class AuthDAO {
+
+    public Usuario login(String nombre, String contrasena) throws Exception {
+        // La regla del proyecto: usar vistas. Aqui usamos v_usuario_activo.
+        String sql = "SELECT idUsuario, nombre, rol " +
+                     "FROM v_usuario_activo " +
+                     "WHERE nombre = ? AND hash256 = SHA2(?, 256) " +
+                     "LIMIT 1";
+        try (Connection cn = Db.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasena);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                        rs.getInt("idUsuario"),
+                        rs.getString("nombre"),
+                        rs.getString("rol")
+                    );
+                }
+                return null;
+            }
+        }
+    }
+}

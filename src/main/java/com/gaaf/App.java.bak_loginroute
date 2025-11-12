@@ -1,0 +1,53 @@
+package com.gaaf;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class App extends Application {
+    private Stage stage;
+    private Scene scene;
+    private Usuario usuarioActual;
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.stage = primaryStage;
+
+        // ARRANCA en Login
+        BorderPane root = new LoginView(this).getRoot();
+        this.scene = new Scene(root, 900, 600);
+
+        try {
+            this.scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        } catch (Exception ignore) {}
+
+        this.stage.setTitle("GAAF");
+        this.stage.setScene(this.scene);
+        this.stage.show();
+    }
+
+    // Navegacion centralizada
+    public void mostrarHome() {
+        this.scene.setRoot(new HomeView(this).getRoot());
+    }
+    public void mostrarLogin() {
+        this.scene.setRoot(new LoginView(this).getRoot());
+    }
+
+    // Usuario en sesion
+    public void setUsuarioActual(Usuario u) { this.usuarioActual = u; }
+    public Usuario getUsuarioActual() { return this.usuarioActual; }
+
+    public static void main(String[] args) { launch(args); }
+
+    public void mostrarInventario(){ this.scene.setRoot(new InventarioView(this).getRoot()); }
+    public void mostrarPedidos(){ this.scene.setRoot(new PedidosView(this).getRoot()); }
+    public void mostrarProveedores(){ this.scene.setRoot(new ProveedoresView(this).getRoot()); }
+    public void mostrarBodega(){ this.scene.setRoot(new BodegaView(this).getRoot()); }
+
+    public void cerrarSesion(){
+        this.usuarioActual = null;
+        mostrarLogin();
+    }
+}

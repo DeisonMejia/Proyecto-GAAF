@@ -1,1 +1,2 @@
-SELECT total FROM v_total_pedido_producto;
+ELECT COALESCE(SUM(cantidadPorBodega),0) AS total
+FROM v_inventario;

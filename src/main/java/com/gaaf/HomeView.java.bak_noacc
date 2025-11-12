@@ -1,0 +1,69 @@
+package com.gaaf;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+
+/**
+ * Pantalla de inicio.
+ * Botones centrados verticalmente a la izquierda.
+ */
+public class HomeView {
+  private final BorderPane root;
+
+  public HomeView(App app) {
+    root = new BorderPane();
+    root.setPadding(new Insets(10));
+
+    // botones
+    Button btnInv = new Button("Ver inventario");
+    btnInv.setOnAction(e -> app.mostrarInventario());
+
+    Button btnPedidos = new Button("Ver pedidos");
+    btnPedidos.setOnAction(e -> { javafx.scene.Node n=(javafx.scene.Node)e.getSource(); javafx.stage.Stage st=(javafx.stage.Stage)n.getScene().getWindow(); st.getScene().setRoot(new PedidosView(app).getRoot()); });btnPedidos.setOnAction(e -> { javafx.scene.Node n=(javafx.scene.Node)e.getSource(); javafx.stage.Stage st=(javafx.stage.Stage)n.getScene().getWindow(); st.getScene().setRoot(new PedidosView(app).getRoot()); });
+
+    Button btnProv = new Button("Ver proveedores");
+    btnProv.setOnAction(e -> { javafx.scene.Node n=(javafx.scene.Node)e.getSource(); javafx.stage.Stage st=(javafx.stage.Stage)n.getScene().getWindow(); st.getScene().setRoot(new ProveedoresView(app).getRoot()); });
+
+    Button btnBod = new Button("Ver bodega");
+    btnBod.setOnAction(e -> { javafx.scene.Node n=(javafx.scene.Node)e.getSource(); javafx.stage.Stage st=(javafx.stage.Stage)n.getScene().getWindow(); st.getScene().setRoot(new BodegaView(app).getRoot()); });
+
+    // menu de botones
+    VBox menu = new VBox(10, btnInv, btnPedidos, btnProv, btnBod);
+    menu.setPadding(new Insets(10));
+    menu.setAlignment(Pos.CENTER_LEFT);
+    menu.setFillWidth(true); // que los botones ocupen el ancho
+    // ancho consistente de los botones
+    btnInv.setMaxWidth(Double.MAX_VALUE);
+    btnPedidos.setMaxWidth(Double.MAX_VALUE);
+    btnProv.setMaxWidth(Double.MAX_VALUE);
+    btnBod.setMaxWidth(Double.MAX_VALUE);
+
+    // espaciadores para centrar vertical
+    Region top = new Region(), bottom = new Region();
+    VBox.setVgrow(top, Priority.ALWAYS);
+    VBox.setVgrow(bottom, Priority.ALWAYS);
+
+    // columna izquierda con el menu centrado
+    VBox left = new VBox(top, menu, bottom);
+    left.setAlignment(Pos.CENTER_LEFT);
+    left.setPadding(new Insets(10));
+    left.setPrefWidth(200);
+
+    // centro: logo
+    ImageView logo = new ImageView(new Image(getClass().getResource("/img/logo.png").toExternalForm()));
+    logo.setFitWidth(360);
+    logo.setPreserveRatio(true);
+    VBox centro = new VBox(20, logo);
+    centro.setAlignment(Pos.CENTER);
+
+    root.setLeft(left);
+    root.setCenter(centro);
+    root.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+  }
+
+  public BorderPane getRoot(){ return root; }
+}

@@ -1,0 +1,4 @@
+--patch-module
+com.gaaf=_
+--add-reads
+com.gaaf=ALL-UNNAMED
