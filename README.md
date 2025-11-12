@@ -29,13 +29,13 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 #### Rol / Nombre
 
-🧠 Jefe de Proyecto:	Deison Leonardo Patiño Mejía
+🧠 Jefe de Proyecto: Deison Leonardo Patiño Mejia
 
-🗄️ Administrador de Base de Datos (DBA):	Nicolás Sarmiento Gómez
+🗄️ Administrador de Base de Datos (DBA): Nicolás Sarmiento Gómez
 
-🧩 Diseñadores UML:	Luis Alberto Becerra Rojas, Eduar Andrés Suárez Contreras
+🧩 Diseñadores UML: Luis Alberto Becerra Rojas
 
-🧪 QA / Pruebas:	Sofía Deantonio Luna
+🧪 QA / Pruebas: Sofía Deantonio Luna
 
 💻 Desarrolladores:	Miguel José Báez García, Alan David Gutiérrez Jiménez
 
@@ -44,14 +44,14 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 #### Fecha / Entregable
 
-🗓️ 4 de Octubre:	Diseño y base de datos
+🗓️ 4 de Octubre: Diseño y base de datos
 
-🗓️ 11 de Octubre:	Código y diseño finalizados
+🗓️ 11 de Octubre: Código y diseño finalizados
 
-🗓️ 18 de Octubre:	Entrega funcional y manuales
+🗓️ 15 de Noviembre: Entrega funcional y manuales
 
 
 ### 📄 Documento Plan de accion del proyecto
 
 > Accedemos con el siguiente link
-https://docs.google.com/document/d/1B_rr9QrhllXNR1gwuG-JbrsGdP-mkZKVjIBNS_Nujyk/edit?usp=sharing
+https://docs.google.com/document/d/1vZUhWHup6GummBQnnDY_2LCnYVevGLbKadgYEagKCmU/edit?usp=sharing
