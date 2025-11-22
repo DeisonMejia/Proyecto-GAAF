@@ -35,7 +35,7 @@ Documentar el proceso mediante manual técnico y manual de usuario.
 
 🧩 Diseñadores UML: Luis Alberto Becerra Rojas
 
-🧪 QA / Pruebas: Sofía Deantonio Luna
+🧪 QA / Pruebas: Sofía Deantonio Luna, Camilo Baez
 
 💻 Desarrolladores:	Miguel José Báez García, Alan David Gutiérrez Jiménez
 
